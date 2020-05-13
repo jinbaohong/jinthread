@@ -202,32 +202,27 @@ int tsleep(int event)
 
 int twakeup(int event)
 {
-	PROC *tmp, *tmp2, *last;
-	int cnt, head_first_flag;
+	PROC *tmp, *last;
+	int cnt;
 
-	head_first_flag = 0;
 	cnt = 0;
 	last = NULL;
-	tmp2 = tmp = sleepList;
+	tmp = sleepList;
 	while(tmp){
-		//
-		tmp2 = tmp;
-		//
 		if (tmp->event == event){
-			// dequeue(&sleepList)
-			if (last) // case: last is NULL
-				last->next = tmp->next;
 			tmp->status = READY;
 			printf("task %d wake up task %d\n", running->pid, tmp->pid);
-			//
-			tmp = tmp->next;
-			//
-			enqueue(&readyQueue, tmp2);
+
+			if (tmp == sleepList){
+				enqueue(&readyQueue, dequeue(&sleepList));
+				tmp = sleepList;
+			} else {
+				last->next = tmp->next;
+				enqueue(&readyQueue, tmp);
+				tmp = last->next;
+			}
 			cnt++;
 		} else {
-			if (head_first_flag == 0)
-				sleepList = tmp;
-			head_first_flag = 1;
 			last = tmp;
 			tmp = tmp->next;
 		}
@@ -238,7 +233,7 @@ int twakeup(int event)
 
 int join(int targetPid, int *status)
 {
-	PROC *tmp;
+	PROC *tmp, *i;
 	// Test if targetPid exist
 	printf("Test if targetPid exist...\n");
 	if (!(tmp = _get_proc(targetPid, zombieList)))
@@ -261,6 +256,14 @@ int join(int targetPid, int *status)
 		tmp->status = FREE;
 		tmp->priority = 0;
 		enqueue(&freeList, tmp);
+		if (tmp == zombieList)
+			dequeue(&zombieList);
+		else {
+			i = zombieList;
+			while (i->next != tmp)
+				i = i->next;
+			i->next = tmp->next;
+		}
 
 		return tmp->pid;
 	}
@@ -285,7 +288,15 @@ int join(int targetPid, int *status)
 	tmp->status = FREE;
 	tmp->priority = 0;
 	enqueue(&freeList, tmp);
-
+	if (tmp == zombieList)
+		dequeue(&zombieList);
+	else {
+		i = zombieList;
+		while (i->next != tmp)
+			i = i->next;
+		i->next = tmp->next;
+	}
+	
 	return tmp->pid;
 
 }
