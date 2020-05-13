@@ -1,7 +1,15 @@
+typedef struct mutex{
+	int lock; // mutex lock state: 0 for unlocked, 1 for locked
+	PROC *owner; // pointer to owner of mutex; may also use PID
+	PROC *queue; // FIFO queue of BLOCKED waiting PROCs
+} MUTEX;
+
+
 MUTEX *mutex_create();
 void mutex_destroy(MUTEX *mp);
 int mutex_lock(MUTEX *mp);
 int mutex_unlock(MUTEX *mp);
+
 
 MUTEX *mutex_create() // create a mutex and initialize it
 {

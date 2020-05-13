@@ -1,7 +1,9 @@
 # jinthread
 ```bash
-gcc -m32 t.c ts.s
+gcc -m32 example_producer_consumer.c ts.s
 ./a.out
 ```
 ## Todo
 1. Fix queue system. (V)
+2. Support mutex.	 (V)
+3. Support semaphore.(V)
