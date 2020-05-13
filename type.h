@@ -19,3 +19,9 @@ typedef struct proc{
 	struct proc *joinPtr;
 	int stack[SSIZE];
 } PROC;
+
+typedef struct mutex{
+	int lock; // mutex lock state: 0 for unlocked, 1 for locked
+	PROC *owner; // pointer to owner of mutex; may also use PID
+	PROC *queue; // FIFO queue of BLOCKED waiting PROCs
+} MUTEX;
