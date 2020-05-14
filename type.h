@@ -5,7 +5,8 @@
 #define READY 1
 #define SLEEP 2
 #define BLOCK 3
-#define ZOMBIE 4
+#define PAUSE 4
+#define ZOMBIE 5
 
 typedef struct proc{
 	struct proc *next;
@@ -17,6 +18,8 @@ typedef struct proc{
 	int exitStatus;
 	int joinPid;
 	struct proc *joinPtr;
+	int time;   // time slice in ticks
+	int pause;  // pause time in seconds
 	int stack[SSIZE];
 } PROC;
 

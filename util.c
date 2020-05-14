@@ -45,5 +45,7 @@ void printAll(void)
 	printList("    running", running);
 	printList("    sleepList", sleepList);
 	printList("    zombieList", zombieList);
+	printTimequeue("    timerQueue", timerQueue);
+	printTimequeue("    timerPool", timerPool);
 	printf("-----------------------------\n");
 }
