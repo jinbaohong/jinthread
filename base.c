@@ -59,6 +59,10 @@ int init()
 	t.it_interval.tv_usec = 10000; // period = 10 msec
 	setitimer(ITIMER_REAL, &t, NULL); // start REAL mode timer
 
+	// Protect tqe list
+	sigemptyset(&sigmask);
+	sigaddset(&sigmask, SIGALRM);
+	
 	// create P0 as initial running task
 	running = p = dequeue(&freeList);
 	p->status = READY;

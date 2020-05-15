@@ -13,6 +13,9 @@ PROC *zombieList;
 struct tqe *timerQueue;
 struct tqe *timerPool;
 
+sigset_t sigmask, oldmask;
+
+
 struct tqe {
 	struct tqe *next;
 	PROC *proc;
@@ -128,7 +131,9 @@ int printTimequeue(char *name, struct tqe *p)
 
 int do_timer(int arg, void (action)())
 { // after arg secs, run action()
+	sigprocmask(SIG_BLOCK, &sigmask, &oldmask);
 	tqe_add(arg, action);
+	sigprocmask(SIG_UNBLOCK, &sigmask, &oldmask);
 }
 
 int do_ps()
